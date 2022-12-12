@@ -118,7 +118,7 @@ def get_data(*,
             begin, size, _ = tf.image.sample_distorted_bounding_box(
                 tf.shape(im),
                 tf.zeros([0, 0, 4], tf.float32),
-                area_range=(0.05, 1.0),
+                area_range=(0.5, 1.0),
                 min_object_covered=0,  # Don't enforce a minimum area.
                 use_image_if_no_bounding_boxes=True)
             im = tf.slice(im, begin, size)
