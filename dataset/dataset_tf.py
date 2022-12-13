@@ -228,7 +228,7 @@ def get_data_from_tfds(*, config, mode):
 
 
 
-def get_data_from_directory_of_pathfile(directory, labelfile, image_size, batch_size, shuffle_buffer):
+def get_data_from_directory_of_pathfile(directory, labelfile, image_size, batch_size, shuffle_buffer, mode='train'):
     """Returns dataset as read from specified `directory`."""
 
     dataset_info = get_directory_info(directory)
