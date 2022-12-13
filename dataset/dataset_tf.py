@@ -232,9 +232,9 @@ def get_data_from_directory_of_pathfile(directory, labelfile, image_size, batch_
     """Returns dataset as read from specified `directory`."""
 
     dataset_info = get_directory_info(directory)
-    if str(labelfile).lower().startswith('train'):
-        mode = 'train'
-    else: mode = 'test'
+#     if str(labelfile).lower().startswith('train'):
+#         mode = 'train'
+#     else: mode = 'test'
 
     with open(os.path.join(directory, labelfile), 'r') as f:
         data = f.readlines()
