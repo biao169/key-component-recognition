@@ -164,8 +164,8 @@ def prefetch(dataset, n_prefetch):
     ds_iter = iter(dataset)
     ds_iter = map(lambda x: jax.tree_map(lambda t: np.asarray(memoryview(t)), x),
                   ds_iter)
-    if n_prefetch:
-        ds_iter = flax.jax_utils.prefetch_to_device(ds_iter, n_prefetch)
+    # if n_prefetch:
+    #     ds_iter = flax.jax_utils.prefetch_to_device(ds_iter, n_prefetch)
     return ds_iter
 
 
@@ -228,17 +228,16 @@ def get_data_from_tfds(*, config, mode):
 
 
 
-def get_data_from_directory_of_pathfile(directory, labelfile, image_size, batch_size, shuffle_buffer, mode=''):
+def get_data_from_directory_of_pathfile(directory, labelfile, image_size, batch_size, shuffle_buffer, with_info=True):
     """Returns dataset as read from specified `directory`."""
 
     dataset_info = get_directory_info(directory)
-    
-    if mode =='' or mode is None:
-        if str(labelfile).lower().startswith('train'):
-            mode = 'train'
-        else: mode = 'test'
-
-    with open(os.path.join(directory, labelfile), 'r') as f:
+    if str(labelfile).lower().startswith('train'):
+        mode = 'train'
+    else: mode = 'test'
+    path = os.path.join(directory, labelfile)
+    path = path.replace('\\', '/')
+    with open(path, 'r') as f:
         data = f.readlines()
     path = []
     for file in data:
