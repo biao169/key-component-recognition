@@ -10,7 +10,10 @@ import math
 ### 特征使用ORB算法，先滤波再计算特征点。特征区域可以放大成图片尺寸的 1/K 倍
 ### k==1:特征区域不放大； k==0:特征区域默认比图片整体尺寸小一半
 def imageConcentration(img00, k: float = 0, ishow=False):
-    img0 = img00.copy()
+    try:
+        img0 = img00.copy()
+    except:
+        img0 = img00.clone()
     img0 = cv.bilateralFilter(img0, 5, 12.5, 6)  ## 双边滤波
     img0 = cv.GaussianBlur(img0, (5, 5), 10)  # 高斯滤波
     # img0 = cv.blur(img0, (3, 3), (-1, -1))  ## #中值滤波
