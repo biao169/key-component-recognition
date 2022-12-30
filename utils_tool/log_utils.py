@@ -147,7 +147,7 @@ class Summary_Log:
 
     def add_scalars_(self, main_tag: str, scalars: {}, step: int, tolerant=False):
         if main_tag not in self.headers.keys():
-            raise "main_tag: [%s] should be one of : %s" % (main_tag, str(self.headers.keys()))
+            raise  "main_tag: [%s] should be one of : %s" % (main_tag, str(self.headers.keys()))
         if not tolerant and scalars.keys() != self.headers[main_tag]:
             raise "scalars: [{}] should be one of : {}".format(scalars.keys(), self.headers[main_tag])
 

@@ -22,6 +22,7 @@ import numpy as np
 import tensorflow as tf
 import tensorflow_datasets as tfds
 
+from utils_tool.ImageProcessing_Set import imageConcentration
 import sys
 
 if sys.platform != 'darwin':
@@ -52,6 +53,7 @@ def get_directory_info(directory):
     paths = glob.glob(examples_glob)
     get_classname = lambda path: path.split('/')[-2]
     class_names = sorted(set(map(get_classname, paths)))
+
     return dict(
         num_examples=len(paths),
         num_classes=len(class_names),
@@ -113,6 +115,7 @@ def get_data(*,
 
     def _pp(data):
         im = image_decoder(data['image'])
+        im = imageConcentration(im, k=1.2, ishow=False)
         if mode == 'train':
             channels = im.shape[-1]
             begin, size, _ = tf.image.sample_distorted_bounding_box(
@@ -232,6 +235,8 @@ def get_data_from_directory_of_pathfile(directory, labelfile, image_size, batch_
     """Returns dataset as read from specified `directory`."""
 
     dataset_info = get_directory_info(directory)
+    # print( 'get_data_from_directory_of_pathfile', dataset_info )
+
     if str(labelfile).lower().startswith('train'):
         mode = 'train'
     else: mode = 'test'
@@ -239,23 +244,28 @@ def get_data_from_directory_of_pathfile(directory, labelfile, image_size, batch_
     path = path.replace('\\', '/')
     with open(path, 'r') as f:
         data = f.readlines()
-    path = []
+    paths = []
     for file in data:
-        fi, lb = file.strip().split('\t')
+        fi, lb = file.strip().split('\t')[:2]
         p = os.path.join(directory, fi).replace('\\', '/')
-        path.append( p )
-    data = tf.data.Dataset.from_tensor_slices(path)
+        paths.append( p )
+
+    data = tf.data.Dataset.from_tensor_slices(paths)
     # data = tf.data.Dataset.list_files(dataset_info['examples_glob'])
     class_names = [
         dataset_info['int2str'](id_) for id_ in range(dataset_info['num_classes'])
     ]
 
+    class_names = ['A', 'B', 'C', 'D', 'E', 'F']
+    # class_names = ['a', 'b', 'c', 'd', 'e', 'f']
+    dataset_info['num_classes'] = len(class_names)
     def _pp(path):
         # path = path[0]
         return dict(
             image=path,
             label=tf.where(
-                tf.strings.split(path, '/')[-2] == class_names
+                # tf.strings.split(path, '/')[-2] == class_names
+                tf.strings.split(tf.strings.split(path, '/')[-1], ' ')[0] == class_names
             )[0][0],
         )
 

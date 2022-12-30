@@ -162,6 +162,7 @@ class Dataset_cv(torch.utils.data.Dataset):
             labelList = labelList2
 
         self.class_num = {'num_class': len(labelList.items()), 'detail': labelList, 'all samples:': np.array(list(labelList.values())).sum()}
+
         if shuffer:
             self.img_index = dataShuffer(self.imagePath_label)  ## 保持每个周期中，样本都平衡
         else:
@@ -229,6 +230,13 @@ class Dataset_Concentration(Dataset_cv):
         self.k = k
         pass
 
+    def read_img(self, file):
+        img = cv.imread(file)
+        img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
+        # img = cv.resize(img, self.imgSize)
+        # img = np.array(img, dtype=np.uint8)
+        return img
+
     def __getitem__(self, idx):  ## 不/在线读取数据
         item = self.img_index[idx]
         if self.online:
@@ -237,6 +245,7 @@ class Dataset_Concentration(Dataset_cv):
         else:
             img, label = self.imagedata[item], self.imagePath_label[item][1]
         img = imageConcentration(img, k=self.k, ishow=False)
+        img = cv.resize(img, self.imgSize)
         img = torch.from_numpy(img.transpose((2, 0, 1)))  # np.array
         img = img.to(torch.float)
         img = img.div(255.0)
